@@ -15,7 +15,7 @@ HOSTNAME2_IP=$5
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Install slurm
-sudo apt update && sudo apt upgrade -y
+sudo apt update
 sudo apt install -y slurm-wlm slurm-client munge locales
 
 current_hostname=$(hostname)
