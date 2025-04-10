@@ -18,12 +18,6 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y slurm-wlm slurm-client munge locales
 
-# Set locale
-sudo locale-gen en_GB.UTF-8
-sudo update-locale LANG=en_GB.UTF-8
-export LANG=en_GB.UTF-8
-export LC_ALL=en_GB.UTF-8
-
 current_hostname=$(hostname)
 if [ "$current_hostname" == "$HOSTNAME1" ]; then
     echo "$HOSTNAME2_IP $HOSTNAME2" | sudo tee -a /etc/hosts
