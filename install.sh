@@ -18,15 +18,6 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 apt update
 apt install -y slurm-wlm slurm-client munge locales
 
-current_hostname=$(hostname)
-if [ "$current_hostname" == "$HOSTNAME1" ]; then
-    echo "$HOSTNAME2_IP $HOSTNAME2" | tee -a /etc/hosts
-elif [ "$current_hostname" == "$HOSTNAME2" ]; then
-    echo "$HOSTNAME1_IP $HOSTNAME1" | tee -a /etc/hosts
-else
-    echo "Error: current hostname is not $HOSTNAME1 or $HOSTNAME2" >&2 && exit 1
-fi
-
 # ================================================
 # munge setup
 # ================================================
