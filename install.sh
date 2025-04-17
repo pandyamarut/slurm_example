@@ -18,12 +18,13 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 apt update
 apt install -y slurm-wlm slurm-client munge locales
 
-if [ "$NODE_RANK" == "0" ]; then
+current_hostname=$(hostname)
+if [ "$current_hostname" == "$HOSTNAME1" ]; then
     echo "$HOSTNAME2_IP $HOSTNAME2" | tee -a /etc/hosts
-elif [ "$NODE_RANK" == "1" ]; then
+elif [ "$current_hostname" == "$HOSTNAME2" ]; then
     echo "$HOSTNAME1_IP $HOSTNAME1" | tee -a /etc/hosts
 else
-    echo "Error: NODE_RANK is not 0 or 1" >&2 && exit 1
+    echo "Error: current hostname is not $HOSTNAME1 or $HOSTNAME2" >&2 && exit 1
 fi
 
 # ================================================
@@ -75,24 +76,12 @@ for dir in /etc/slurm /etc/slurm-llnl /var/spool/slurm /var/log/slurm-llnl /var/
     chmod -R 755 $dir
 done
 
-# Choose the appropriate hostname based on NODE_RANK
-if [ "$NODE_RANK" == "0" ]; then
-    SLURM_HOSTNAME=$HOSTNAME1
-elif [ "$NODE_RANK" == "1" ]; then
-    SLURM_HOSTNAME=$HOSTNAME2
-else
-    echo "Error: NODE_RANK is not 0 or 1" >&2 && exit 1
-fi
-
 # Create slurm.conf
 bash $SCRIPT_DIR/create_slurm_conf.sh $HOSTNAME1 $HOSTNAME2 $HOSTNAME1_IP $HOSTNAME2_IP > /etc/slurm-llnl/slurm.conf
-# Use the assigned SLURM_HOSTNAME based on NODE_RANK
-bash $SCRIPT_DIR/create_gres_conf.sh $SLURM_HOSTNAME > /etc/slurm-llnl/gres.conf
+bash $SCRIPT_DIR/create_gres_conf.sh $current_hostname > /etc/slurm-llnl/gres.conf
 ln -s /etc/slurm-llnl/slurm.conf /etc/slurm/slurm.conf
 ln -s /etc/slurm-llnl/gres.conf /etc/slurm/gres.conf
 
 echo "Now run the following command to start the slurm services:"
-if [ "$NODE_RANK" == "0" ]; then
-    echo "slurmctld -D"  # Control daemon on node 0
-fi
-echo "slurmd -D"  # Compute daemon on all nodes
+echo "slurmctld -D"
+echo "slurmd -D"
