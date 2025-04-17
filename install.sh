@@ -69,7 +69,7 @@ done
 
 # Create slurm.conf
 bash $SCRIPT_DIR/create_slurm_conf.sh $HOSTNAME1 $HOSTNAME2 $HOSTNAME1_IP $HOSTNAME2_IP > /etc/slurm-llnl/slurm.conf
-bash $SCRIPT_DIR/create_gres_conf.sh $current_hostname > /etc/slurm-llnl/gres.conf
+bash $SCRIPT_DIR/create_gres_conf.sh $HOSTNAME > /etc/slurm-llnl/gres.conf
 ln -s /etc/slurm-llnl/slurm.conf /etc/slurm/slurm.conf
 ln -s /etc/slurm-llnl/gres.conf /etc/slurm/gres.conf
 
