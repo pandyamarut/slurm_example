@@ -14,19 +14,6 @@ HOSTNAME2_IP=$5
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-# Install slurm
-apt update
-apt install -y slurm-wlm slurm-client munge locales
-
-current_hostname=$(hostname)
-if [ "$current_hostname" == "$HOSTNAME1" ]; then
-    echo "$HOSTNAME2_IP $HOSTNAME2" | tee -a /etc/hosts
-elif [ "$current_hostname" == "$HOSTNAME2" ]; then
-    echo "$HOSTNAME1_IP $HOSTNAME1" | tee -a /etc/hosts
-else
-    echo "Error: current hostname is not $HOSTNAME1 or $HOSTNAME2" >&2 && exit 1
-fi
-
 # ================================================
 # munge setup
 # ================================================
@@ -78,7 +65,7 @@ done
 
 # Create slurm.conf
 bash $SCRIPT_DIR/create_slurm_conf.sh $HOSTNAME1 $HOSTNAME2 $HOSTNAME1_IP $HOSTNAME2_IP > /etc/slurm-llnl/slurm.conf
-bash $SCRIPT_DIR/create_gres_conf.sh $current_hostname > /etc/slurm-llnl/gres.conf
+bash $SCRIPT_DIR/create_gres_conf.sh $HOSTNAME > /etc/slurm-llnl/gres.conf
 ln -s /etc/slurm-llnl/slurm.conf /etc/slurm/slurm.conf
 ln -s /etc/slurm-llnl/gres.conf /etc/slurm/gres.conf
 
